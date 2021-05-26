@@ -5,11 +5,11 @@ import { tap, either } from './utils'
 export const createEntityStore = ({ app, crud, init, entityOf, entityType }: StoreOptions): EntityStore => {
     const store = new EventEmitter()
 
-    const emitCreated = ([id, state, events]) => store.emit(Events.EntityCreated, id, state)
-    const emitModified = ([id, state, events]) => store.emit(Events.EntityModified, id, state)
-    const emitRemoved = ([id, state, events]) => store.emit(Events.EntityRemoved, id, state)
+    const emitCreated = ([id, state, events]) => store.emit(Events.EntityCreated, { entityType, id, state })
+    const emitModified = ([id, state, events]) => store.emit(Events.EntityModified, { entityType, id, state })
+    const emitRemoved = ([id, state, events]) => store.emit(Events.EntityRemoved, { entityType, id, state })
     const emitEvents = ([id, state, events]) =>
-        events.map(({ name, data }) => store.emit(Events.DomainEvent, { name, id, data }))
+        events.map(({ name, data }) => store.emit(Events.DomainEvent, { entityType, name, id, data }))
 
     const commandOf = (name: string, data: Payload, meta: Meta = {}) => ({ name, data, meta: { ...meta, app } })
 

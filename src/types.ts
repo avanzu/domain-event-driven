@@ -47,6 +47,7 @@ export type DomainEvent = {
     type: string
     id: Identity
     data: Payload
+    entityType?: EntityType
     meta?: Meta
 }
 
