@@ -2,7 +2,7 @@ import { StoreOptions, DomainEvents as Events, Identity, Payload, Meta, Entity, 
 import { EventEmitter } from 'events'
 import { tap, either } from './utils'
 
-export const createEntityStore = ({ app, crud, init, entityOf }: StoreOptions): EntityStore => {
+export const createEntityStore = ({ app, crud, init, entityOf, entityType }: StoreOptions): EntityStore => {
     const store = new EventEmitter()
 
     const emitCreated = ([id, state, events]) => store.emit(Events.EntityCreated, id, state)
@@ -17,7 +17,7 @@ export const createEntityStore = ({ app, crud, init, entityOf }: StoreOptions): 
 
     const create = ({ id, events, state }: Entity) =>
         crud
-            .identify()
+            .identify(entityType)
             .then((id) => crud.create(id, state, events))
             .then(tap(emitCreated))
             .then(tap(emitEvents))

@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+export type EntityType = string
 export type State = any
 export type Payload = object
 export type Params = { [index: string]: any }
@@ -35,7 +36,7 @@ export type Entity = {
 
 export type CRUDResult = Promise<[Identity, State, EventStream]>
 export type CRUD = {
-    identify: () => Promise<Identity>
+    identify: (type: EntityType) => Promise<Identity>
     load: (id: Identity) => CRUDResult
     create: (id: Identity, state: State, stream: EventStream) => CRUDResult
     update: (id: Identity, state: State, stream: EventStream) => CRUDResult
@@ -61,6 +62,7 @@ export type StoreOptions = {
     crud: CRUD
     init: Initializer
     entityOf: EntityFactory
+    entityType?: EntityType
 }
 
 export interface EntityStore extends EventEmitter {
