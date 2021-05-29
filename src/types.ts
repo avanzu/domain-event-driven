@@ -23,8 +23,8 @@ export type Reducer<T> = (state: State, stream: T) => State
 export type Runner<T> = (state: State, command: T) => AsyncResult
 export type Initializer = () => State
 export type EntityFactory = (id: Identity, state: State, stream?: EventStream) => Entity
-export type Predicate = (x: any) => boolean
-export type Callback<T> = (x: any) => T
+export type Predicate = (x: any, ...args: any[]) => boolean
+export type Callback<T> = (x: any, ...args: any[]) => T
 export type CommandFactory = (...args: any[]) => Command
 
 export type Entity = {
@@ -36,11 +36,11 @@ export type Entity = {
 
 export type CRUDResult = Promise<[Identity, State, EventStream]>
 export type CRUD = {
-    identify: (type: EntityType) => Promise<Identity>
-    load: (id: Identity) => CRUDResult
-    create: (id: Identity, state: State, stream: EventStream) => CRUDResult
-    update: (id: Identity, state: State, stream: EventStream) => CRUDResult
-    remove: (id: Identity, state: State, stream: EventStream) => CRUDResult
+    identify: (type: EntityType, meta?: Meta) => Promise<Identity>
+    load: (id: Identity, meta?: Meta) => CRUDResult
+    create: (id: Identity, state: State, stream: EventStream, meta?: Meta) => CRUDResult
+    update: (id: Identity, state: State, stream: EventStream, meta?: Meta) => CRUDResult
+    remove: (id: Identity, state: State, stream: EventStream, meta?: Meta) => CRUDResult
 }
 
 export type DomainEvent = {

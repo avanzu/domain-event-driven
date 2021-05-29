@@ -1,4 +1,4 @@
-import { StoreOptions, DomainEvents as Events, Identity, Payload, Meta, Entity, EntityStore, CRUDResult } from './types'
+import { StoreOptions, DomainEvents as Events, Identity, Entity, EntityStore, Meta } from './types'
 import { EventEmitter } from 'events'
 import { tap, either } from './utils'
 
@@ -9,29 +9,28 @@ export const createEntityStore = ({ app, crud, init, entityOf, entityType }: Sto
     const emitModified = ([id, state, events]) => store.emit(Events.EntityModified, { entityType, id, state })
     const emitRemoved = ([id, state, events]) => store.emit(Events.EntityRemoved, { entityType, id, state })
     const emitEvents = ([id, state, events]) =>
-        events.map(({ name, data }) => store.emit(Events.DomainEvent, { entityType, name, id, data }))
+        events.map(({ type, data }) => store.emit(Events.DomainEvent, { entityType, type, id, data }))
 
-    const commandOf = (name: string, data: Payload, meta: Meta = {}) => ({ name, data, meta: { ...meta, app } })
+    const load = (id: Identity, meta?: Meta) =>
+        crud.load(id, meta).then(([id, state, events]) => entityOf(id, state, events))
 
-    const load = (id: Identity) => crud.load(id).then(([id, state, events]) => entityOf(id, state, events))
-
-    const create = ({ id, events, state }: Entity) =>
+    const create = ({ id, events, state }: Entity, meta?: Meta) =>
         crud
-            .identify(entityType)
-            .then((id) => crud.create(id, state, events))
+            .identify(entityType, meta)
+            .then((id) => crud.create(id, state, events, meta))
             .then(tap(emitCreated))
             .then(tap(emitEvents))
             .then(([id, state]) => entityOf(id, state))
 
-    const remove = ({ id, events, state }: Partial<Entity>) =>
+    const remove = ({ id, events, state }: Partial<Entity>, meta?: Meta) =>
         crud
-            .remove(id, state, events)
+            .remove(id, state, events, meta)
             .then(tap(emitRemoved))
             .then(([id]) => id as Identity)
 
-    const update = ({ id, events, state }: Entity) =>
+    const update = ({ id, events, state }: Entity, meta?: Meta) =>
         crud
-            .update(id, state, events)
+            .update(id, state, events, meta)
             .then(tap(emitModified))
             .then(tap(emitEvents))
             .then(([id, state]) => entityOf(id, state))
