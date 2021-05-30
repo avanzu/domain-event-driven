@@ -69,7 +69,7 @@ export type StoreOptions = {
 export interface EntityStore extends EventEmitter {
     make: () => Entity
     coerce: (id: Identity, state: object) => Entity
-    load: (id: Identity) => Promise<Entity>
-    save: (item: Entity) => Promise<Entity>
-    remove: (item: Partial<Entity>) => Promise<Identity>
+    load: (id: Identity, meta?: Meta) => Promise<Entity>
+    save: (item: Entity, meta?: Meta) => Promise<Entity>
+    remove: (item: Partial<Entity>, meta?: Meta) => Promise<Identity>
 }
