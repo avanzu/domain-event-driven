@@ -1,3 +1,4 @@
+import { entityOf } from '../entity'
 import { createEntityStore } from '../store'
 import { dummyOf, init, commands } from './dummy'
 
@@ -77,5 +78,15 @@ describe('The aggregate store', () => {
 
         const promise = dummyStore.remove({ id: 1234567, events: [], state: null })
         await expect(promise).resolves.toEqual(1234567)
+    })
+
+    it('should allow to coerce an arbitrary state into an entity', async () => {
+        const entity = dummyStore.coerce('12345', { name: 'coerced', foo: 'bar' })
+        expect(entity).toMatchObject({
+            id: '12345',
+            state: { foo: 'bar', name: 'coerced', tested: false, quantity: 0 },
+            events: [],
+            execute: expect.any(Function),
+        })
     })
 })
