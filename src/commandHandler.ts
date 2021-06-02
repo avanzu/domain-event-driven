@@ -1,10 +1,12 @@
-import { Command, CommandHandler, HandlerMap, State, Handler, Result, AsyncResult, DomainError, Payload } from './types'
+import { Command, HandlerMap, State, Result, Payload } from './types'
 
 const toEventStream = (result) => (Array.isArray(result) ? result : [result])
 export const commandError = (message: string, event: string, data?: Payload) =>
     Object.assign(new Error(message), { type: 'ECOMMAND', event, data })
-/* prettier-ignore */
-export const throwCommandError = (message: string, context?:any) => { throw commandError(message, context) }
+
+export const throwCommandError = (message: string, event: string, data?: Payload) => {
+    throw commandError(message, event, data)
+}
 
 export const commandOf = (type: string, data: object, meta?: object): Command => ({ type, data, meta })
 

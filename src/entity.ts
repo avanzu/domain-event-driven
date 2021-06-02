@@ -1,17 +1,4 @@
-import {
-    Identity,
-    State,
-    Event,
-    EventStream,
-    Entity,
-    Command,
-    HandlerMap,
-    Reducer,
-    Runner,
-    Handler,
-    Result,
-    DomainError,
-} from './types'
+import { Identity, State, Event, EventStream, Entity, Command, HandlerMap, Reducer, Runner, Result } from './types'
 import { matchCommandWith } from './commandHandler'
 import { matchEventsWith } from './eventHandler'
 import { tap, assign } from './utils'
