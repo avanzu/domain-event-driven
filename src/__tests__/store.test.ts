@@ -1,4 +1,3 @@
-import { entityOf } from '../entity'
 import { createEntityStore } from '../store'
 import { dummyOf, init, commands } from './dummy'
 
@@ -88,5 +87,30 @@ describe('The aggregate store', () => {
             events: [],
             execute: expect.any(Function),
         })
+    })
+
+    it('should run commands on entities', async () => {
+        const entity = dummyStore.coerce('999', { name: '', tested: false, quantity: 0 })
+        await dummyStore.execute(entity, commands.rename('foo-bar'))
+
+        expect(entity).toMatchObject({
+            id: '999',
+            state: { name: 'foo-bar', tested: false, quantity: 0 },
+            events: [{ data: { name: 'foo-bar' }, type: 'DummyRenamed', meta: undefined }],
+        })
+    })
+
+    it('should catch command errors and emit them as "DomainError"', async () => {
+        const entity = dummyStore.coerce('999', { name: '', tested: true, quantity: 0 })
+        const onDomainError = jest.fn()
+        dummyStore.once('DomainError', onDomainError)
+        const promise = dummyStore.execute(entity, commands.test())
+
+        await expect(promise).rejects.toMatchObject({
+            type: 'ECOMMAND',
+            event: 'DummyAlreadyTested',
+            data: undefined,
+        })
+        expect(onDomainError).toHaveBeenCalled()
     })
 })

@@ -8,11 +8,12 @@ export type Meta = { app?: Application; params?: Params; [index: string]: any }
 export type Identity = string | number
 export type Event = { type: string; data: Payload; meta?: Meta }
 export type Command = { type: string; data: Payload; meta?: Meta }
-export type DomainError = Error & { type: string }
+export type DomainError = Error & { type: string; event: string; data?: Payload }
 export type AsyncResult = Promise<Event | Event[] | DomainError>
 export type SyncResult = Event | Event[]
 export type Result = AsyncResult | SyncResult
 export type EventStream = Event[]
+export type ErrorStream = DomainError[]
 export type CommandHandler = (state: State, data: Payload, meta?: Meta) => Result
 export type EventHandler = (state: State, data: Payload, meta?: Meta) => State
 export type Handler<U, T> = (state: State, payload: U) => T
@@ -56,6 +57,7 @@ export enum DomainEvents {
     EntityModified = 'EntityModified',
     EntityRemoved = 'EntityRemoved',
     DomainEvent = 'DomainEvent',
+    DomainError = 'DomainError',
 }
 
 export type StoreOptions = {
@@ -72,4 +74,5 @@ export interface EntityStore extends EventEmitter {
     load: (id: Identity, meta?: Meta) => Promise<Entity>
     save: (item: Entity, meta?: Meta) => Promise<Entity>
     remove: (item: Partial<Entity>, meta?: Meta) => Promise<Identity>
+    execute: (item: Entity, command: Command) => Promise<Entity>
 }

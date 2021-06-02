@@ -10,6 +10,7 @@ import {
     Runner,
     Handler,
     Result,
+    DomainError,
 } from './types'
 import { matchCommandWith } from './commandHandler'
 import { matchEventsWith } from './eventHandler'

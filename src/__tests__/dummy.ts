@@ -53,7 +53,9 @@ const commandHandler: HandlerMap<any, Result> = {
     ChangeDummy: (state: Dummy, { data, meta }: Change) => resolveWith(changed(data.quantity, meta)),
     RenameDummy: (state: Dummy, { data, meta }: Rename) => resolveWith(renamed(data.name, meta)),
     TestDummy: (state: Dummy, { data, meta }: Test) =>
-        state.tested ? rejectWith(commandError('Dummy is already tested')) : resolveWith(tested(meta)),
+        state.tested
+            ? rejectWith(commandError('Dummy is already tested', 'DummyAlreadyTested'))
+            : resolveWith(tested(meta)),
     ChangeAndTest: (state: Dummy, { data, meta }: ChangeAndTest) => [changed(data.quantity, meta), tested(meta)],
 }
 

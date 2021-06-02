@@ -8,6 +8,7 @@ describe('The aggregate', () => {
             id: '12345',
             state: { name: 'a dummy', tested: false },
             events: [],
+
             execute: expect.any(Function),
         })
     })
@@ -27,6 +28,7 @@ describe('The aggregate', () => {
             id: '999',
             state: { name: 'renamed-twice', tested: true, quantity: 10 },
             events: [],
+
             execute: expect.any(Function),
         })
     })
@@ -42,6 +44,7 @@ describe('The aggregate', () => {
             id: '12345',
             state: { name: 'foo-bar', tested: true, quantity: 10 },
             events: [entity.renamed('foo-bar'), entity.changed(5), entity.tested()],
+
             execute: expect.any(Function),
         })
     })
@@ -63,6 +66,7 @@ describe('The aggregate', () => {
             id: '12345',
             state: { name: 'foo-bar', tested: true, quantity: 0 },
             events: [entity.renamed('foo-bar'), entity.tested()],
+
             execute: expect.any(Function),
         })
     })
@@ -82,6 +86,7 @@ describe('The aggregate', () => {
             id: '12345',
             state: { name: 'a dummy', tested: false },
             events: [],
+
             execute: expect.any(Function),
         })
     })

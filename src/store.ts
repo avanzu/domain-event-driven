@@ -1,4 +1,13 @@
-import { StoreOptions, DomainEvents as Events, Identity, Entity, EntityStore, Meta } from './types'
+import {
+    StoreOptions,
+    DomainEvents as Events,
+    Identity,
+    Entity,
+    EntityStore,
+    Meta,
+    Command,
+    DomainError,
+} from './types'
 import { EventEmitter } from 'events'
 import { tap, either } from './utils'
 
@@ -10,6 +19,14 @@ export const createEntityStore = ({ app, crud, init, entityOf, entityType }: Sto
     const emitRemoved = ([id, state, events]) => store.emit(Events.EntityRemoved, { entityType, id, state })
     const emitEvents = ([id, state, events]) =>
         events.map(({ type, data }) => store.emit(Events.DomainEvent, { entityType, type, id, data }))
+
+    const handleError =
+        ({ id }: Entity) =>
+        (error: DomainError) =>
+            new Promise<Entity>((resolve, reject) => {
+                store.emit(Events.DomainError, { entityType, id, event: error.event, data: error.data })
+                reject(error)
+            })
 
     const load = (id: Identity, meta?: Meta) =>
         crud.load(id, { app, ...meta }).then(([id, state, events]) => entityOf(id, state, events))
@@ -41,5 +58,7 @@ export const createEntityStore = ({ app, crud, init, entityOf, entityType }: Sto
 
     const save = either(isNew, create, update)
 
-    return Object.assign(store, { make, coerce, load, save, remove })
+    const execute = (entity: Entity, command: Command) => entity.execute(command).catch(handleError(entity))
+
+    return Object.assign(store, { make, coerce, load, save, remove, execute })
 }
