@@ -14,7 +14,8 @@ const createEntity =
                 run(entity.state, command)
                     .then(tap((events: EventStream) => (entity.events = entity.events.concat(events))))
                     .then((events: EventStream) => apply(entity.state, events))
-                    .then((state: State) => assign(entity, { state })),
+                    .then((state: State) => assign(entity, { state }))
+                    .then((state) => state),
         }
 
         return entity

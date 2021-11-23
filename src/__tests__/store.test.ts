@@ -1,5 +1,6 @@
+import { DomainEvents } from '..'
 import { createEntityStore } from '../store'
-import { dummyOf, init, commands } from './dummy'
+import { dummyOf, init, commands, Events } from './dummy'
 
 describe('The aggregate store', () => {
     const app = {}
@@ -11,7 +12,7 @@ describe('The aggregate store', () => {
         remove: jest.fn(),
     }
 
-    const dummyStore = createEntityStore({ app, crud, init, entityOf: dummyOf })
+    const dummyStore = createEntityStore({ app, crud, init, entityOf: dummyOf, entityType: 'Dummy' })
 
     beforeEach(() => jest.clearAllMocks())
 
@@ -57,6 +58,9 @@ describe('The aggregate store', () => {
         crud.load.mockImplementation((id) => Promise.resolve([id, { name: 'foo', tested: true, quantity: 0 }]))
         crud.update.mockImplementation((id, state, events) => Promise.resolve([id, state, events]))
         const changeOnce = commands.change(10, { app, params: { foo: 'bar' } })
+        const onDomainEvent = jest.fn()
+
+        dummyStore.on(DomainEvents.DomainEvent, onDomainEvent)
 
         const promise = dummyStore
             .load(12345)
@@ -70,6 +74,15 @@ describe('The aggregate store', () => {
         })
 
         expect(crud.update).toHaveBeenCalled()
+        expect(onDomainEvent).toHaveBeenCalledWith({
+            type: Events.DummyChanged,
+            entityType: 'Dummy',
+            id: 12345,
+            data: { quantity: 10 },
+            meta: { app: {}, params: { foo: 'bar' } },
+        })
+
+        dummyStore.off(DomainEvents.DomainEvent, onDomainEvent)
     })
 
     it('should remove aggregates', async () => {

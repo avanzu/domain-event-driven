@@ -6,7 +6,7 @@ import { resolveWith, rejectWith } from '../utils'
 
 type Dummy = { name: string; tested: boolean; quantity: number }
 
-enum Events {
+export enum Events {
     DummyCreated = 'DummyCreated',
     DummyChanged = 'DummyChanged',
     DummyRenamed = 'DummyRenamed',
@@ -14,7 +14,7 @@ enum Events {
 }
 
 type Created = { type: Events.DummyCreated; data: { name: string; tested: boolean }; meta: Meta }
-type Changed = { type: Events.DummyChanged; data: { quanity: number }; meta: Meta }
+type Changed = { type: Events.DummyChanged; data: { quantity: number }; meta: Meta }
 type Renamed = { type: Events.DummyRenamed; data: { name: string }; meta: Meta }
 type Tested = { type: Events.DummyTested; data: { tested: boolean }; meta: Meta }
 
@@ -22,7 +22,7 @@ export type DummyEvents = Created | Changed | Renamed | Tested
 
 export const created = (name: string, tested: boolean, meta?: Meta) =>
     eventOf(Events.DummyCreated, { name, tested }, meta)
-export const changed = (quanity: number, meta?: Meta) => eventOf(Events.DummyChanged, { quanity }, meta)
+export const changed = (quantity: number, meta?: Meta) => eventOf(Events.DummyChanged, { quantity }, meta)
 export const renamed = (name: string, meta?: Meta) => eventOf(Events.DummyRenamed, { name }, meta)
 export const tested = (meta?: Meta) => eventOf(Events.DummyTested, { tested: true }, meta)
 export const unTested = (meta?: Meta) => eventOf(Events.DummyTested, { tested: false }, meta)
@@ -67,7 +67,7 @@ const eventHandler: HandlerMap<any, Dummy> = {
     }),
     DummyChanged: (state: Dummy, { data, meta }: Changed) => ({
         ...state,
-        quantity: state.quantity + data.quanity,
+        quantity: state.quantity + data.quantity,
     }),
     DummyRenamed: (state: Dummy, { data, meta }: Renamed) => ({
         ...state,

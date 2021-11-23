@@ -18,7 +18,7 @@ export const createEntityStore = ({ app, crud, init, entityOf, entityType }: Sto
     const emitModified = ([id, state, events]) => store.emit(Events.EntityModified, { entityType, id, state })
     const emitRemoved = ([id, state, events]) => store.emit(Events.EntityRemoved, { entityType, id, state })
     const emitEvents = ([id, state, events]) =>
-        events.map(({ type, data }) => store.emit(Events.DomainEvent, { entityType, type, id, data }))
+        events.map(({ type, data, meta }) => store.emit(Events.DomainEvent, { entityType, type, id, data, meta }))
 
     const handleError =
         ({ id }: Entity) =>
