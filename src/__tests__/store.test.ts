@@ -122,7 +122,7 @@ describe('The aggregate store', () => {
         await expect(promise).rejects.toMatchObject({
             type: 'ECOMMAND',
             event: 'DummyAlreadyTested',
-            data: undefined,
+            data: {},
         })
         expect(onDomainError).toHaveBeenCalled()
     })

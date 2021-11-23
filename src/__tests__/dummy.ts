@@ -32,7 +32,7 @@ export const events = { created, changed, renamed, tested, unTested }
 type Create = { type: 'CreateDummy'; data: { name: string; tested: boolean }; meta: Meta }
 type Change = { type: 'ChangeDummy'; data: { quantity: number }; meta: Meta }
 type Rename = { type: 'RenameDummy'; data: { name: string }; meta: Meta }
-type Test = { type: 'TestDummy'; data: unknown; meta: Meta }
+type Test = { type: 'TestDummy'; data: any; meta: Meta }
 type ChangeAndTest = { type: 'ChangeAndTest'; data: { quantity: number; tested: boolean }; meta: Meta }
 
 export type DummyCommands = Create | Change | Rename | Test
@@ -54,7 +54,7 @@ const commandHandler: HandlerMap<any, Result> = {
     RenameDummy: (state: Dummy, { data, meta }: Rename) => resolveWith(renamed(data.name, meta)),
     TestDummy: (state: Dummy, { data, meta }: Test) =>
         state.tested
-            ? rejectWith(commandError('Dummy is already tested', 'DummyAlreadyTested'))
+            ? rejectWith(commandError('Dummy is already tested', 'DummyAlreadyTested', data, meta))
             : resolveWith(tested(meta)),
     ChangeAndTest: (state: Dummy, { data, meta }: ChangeAndTest) => [changed(data.quantity, meta), tested(meta)],
 }
