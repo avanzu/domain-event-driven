@@ -24,7 +24,13 @@ export const createEntityStore = ({ app, crud, init, entityOf, entityType }: Sto
         ({ id }: Entity) =>
         (error: DomainError) =>
             new Promise<Entity>((resolve, reject) => {
-                store.emit(Events.DomainError, { entityType, id, event: error.event, data: error.data })
+                store.emit(Events.DomainError, {
+                    entityType,
+                    id,
+                    event: error.event,
+                    data: error.data,
+                    meta: error.meta,
+                })
                 reject(error)
             })
 

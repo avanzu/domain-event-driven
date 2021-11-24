@@ -117,12 +117,13 @@ describe('The aggregate store', () => {
         const entity = dummyStore.coerce('999', { name: '', tested: true, quantity: 0 })
         const onDomainError = jest.fn()
         dummyStore.once('DomainError', onDomainError)
-        const promise = dummyStore.execute(entity, commands.test())
+        const promise = dummyStore.execute(entity, commands.test({ meta: true }))
 
         await expect(promise).rejects.toMatchObject({
             type: 'ECOMMAND',
             event: 'DummyAlreadyTested',
             data: {},
+            meta: { meta: true },
         })
         expect(onDomainError).toHaveBeenCalled()
     })
